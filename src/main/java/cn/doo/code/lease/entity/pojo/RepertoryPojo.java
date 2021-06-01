@@ -1,5 +1,7 @@
 package cn.doo.code.lease.entity.pojo;
 
+import lombok.Data;
+
 @Data
 public class RepertoryPojo {
     /**
