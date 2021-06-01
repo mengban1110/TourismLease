@@ -33,6 +33,11 @@ public class Repertory {
     /**
      *
      */
+    private Integer unitdeposit;
+
+    /**
+     *
+     */
     private GoodstypePojo goodstype;
 
 }
