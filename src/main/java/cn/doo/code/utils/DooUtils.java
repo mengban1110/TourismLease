@@ -26,7 +26,7 @@ public class DooUtils {
      * @return
      */
     public static Map<String, Object> print(int code, String msg, Object data, Object count) {
-        HashMap<String, Object> map = new HashMap<String, Object>(4);
+            HashMap<String, Object> map = new HashMap<String, Object>(4);
         map.put("code", code);
         map.put("msg", msg);
         if (data != null) {
