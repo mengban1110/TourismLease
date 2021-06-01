@@ -1,9 +1,9 @@
-package cn.doo.code.lease.entity;
+package cn.doo.code.lease.entity.pojo;
 
 import lombok.Data;
 
 @Data
-public class Employee {
+public class EmployeePojo {
     private Integer id;
     private String username;
     private String password;

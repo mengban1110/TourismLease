@@ -1,15 +1,12 @@
 package cn.doo.code.lease.service.impl;
 
 import cn.doo.code.lease.dao.LoginMapper;
-import cn.doo.code.lease.entity.Employee;
+import cn.doo.code.lease.entity.pojo.EmployeePojo;
 import cn.doo.code.lease.service.LoginService;
 import cn.doo.code.utils.DooUtils;
-import cn.doo.code.utils.EmailUtils;
 import cn.doo.code.utils.FkEmailUtils;
 import cn.doo.code.utils.redis.RedisUtil;
 import com.alibaba.druid.util.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +38,7 @@ public class LoginServiceimpl implements LoginService {
     @Override
     public Map<String, Object> login(String username, String password, String code) {
         //数据库查询用户输入的账号密码是否存在于数据库
-        Employee queryuser = loginMapper.queryUser(username, password);
+        EmployeePojo queryuser = loginMapper.queryUser(username, password);
         //如果查不到为空则返回前端错误信息
         if (queryuser == null) {
             return DooUtils.print(-1, "账号或密码错误", null, null);
@@ -83,7 +80,7 @@ public class LoginServiceimpl implements LoginService {
     @Override
     public Map<String, Object> verify(String username, String password) throws Exception {
         //数据库查询用户输入的账号密码是否存在于数据库
-        Employee queryuser = loginMapper.queryUser(username, password);
+        EmployeePojo queryuser = loginMapper.queryUser(username, password);
         if (queryuser == null) {
             return DooUtils.print(-1, "您输入的用户名或密码错误", null, null);
         }
