@@ -52,7 +52,6 @@ public class FkEmailUtils {
         HashMap<String, Object> root = new HashMap<>(2);
         root.put("verify", code);
         root.put("username", email);
-
         return getEmailHtml(root, "email.ftl");
     }
 
@@ -68,7 +67,8 @@ public class FkEmailUtils {
         String htmlText = "";
         try {
             //设置fk路径目录
-            String ftl = "D:\\idea-workspaces\\TourismLease\\src\\main\\resources\\templates";
+//            String ftl = "D:\\idea-workspaces\\TourismLease\\src\\main\\resources\\templates";
+            String ftl = "E:\\ProgramCode\\IDEA_Code\\LearnWorkingSet\\D20210526_Boot\\TourismLease\\src\\main\\resources\\templates";
             Configuration configuration = new Configuration();
             configuration.setDirectoryForTemplateLoading(new File(ftl));
             Template template = configuration.getTemplate(templateName, "UTF-8");

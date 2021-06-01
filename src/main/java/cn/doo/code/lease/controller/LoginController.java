@@ -35,7 +35,6 @@ public class LoginController {
         return loginService.verify(username, password);
     }
 
-
     /**
      * 登录
      *
@@ -52,10 +51,8 @@ public class LoginController {
         if (StringUtils.isEmpty(code)) {
             return DooUtils.print(-1, "验证码错误", null, null);
         }
-        System.out.println("进入");
 
         return loginService.login(username, password, code);
     }
-
 
 }

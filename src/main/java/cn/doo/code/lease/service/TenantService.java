@@ -1,34 +1,44 @@
 package cn.doo.code.lease.service;
 
+import cn.doo.code.lease.entity.TokenVerify;
+import cn.doo.code.lease.entity.pojo.TenantPojo;
+
 import java.util.Map;
 
 public interface TenantService {
 
     /**
-     * @param token
+     * 查询所有租赁用户
+     * @param tokenVerify
      * @param page
      * @param limit
      * @return
-     * @desc 查询所有租赁用户
      */
-    Map<String, Object> queryAll(String token, Integer page, Integer limit);
+    Map<String, Object> queryAll(TokenVerify tokenVerify, Integer page, Integer limit);
 
     /**
-     * @param token
-     * @param name
-     * @param phone
-     * @desc 新增一个租赁用户
+     * 新增一个租赁用户
+     * @param tokenVerify
+     * @param tenantPojo
+     * @return
      */
-    Map<String, Object> insertOne(String token, String name, String phone);
+    Map<String, Object> insertOne(TokenVerify tokenVerify, TenantPojo tenantPojo);
 
     /**
-     * @param token
+     * 修改一个租赁用户
+     * @param tokenVerify
+     * @param tenantPojo
+     * @return
+     */
+    Map<String, Object> updateOne(TokenVerify tokenVerify, TenantPojo tenantPojo);
+
+    /**
+     * 删除一个租赁用户
+     * @param tokenVerify
      * @param id
      * @return
-     * @desc 删除一个租赁用户
      */
-    Map<String, Object> deleteOne(String token, String id);
-
+    Map<String, Object> deleteOne(TokenVerify tokenVerify, String id);
 
 
 }

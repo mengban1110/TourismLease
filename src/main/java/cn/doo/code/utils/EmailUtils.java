@@ -1,29 +1,20 @@
 package cn.doo.code.utils;
 
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Date;
-import java.util.Map;
 
 @Component
 public class EmailUtils {
+
     @Autowired
     private JavaMailSender javaMailSender;
 
