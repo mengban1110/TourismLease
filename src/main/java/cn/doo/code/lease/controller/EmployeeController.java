@@ -4,7 +4,6 @@ import cn.doo.code.lease.entity.Employee;
 import cn.doo.code.lease.service.impl.EmployeeService;
 import cn.doo.code.utils.DooUtils;
 import cn.doo.code.utils.EmailUtils;
-import cn.doo.code.utils.VcodeUtils;
 import cn.doo.code.utils.redis.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -40,7 +39,7 @@ public class EmployeeController {
         }
 
         //--------生成用户注册发送的验证码-------------
-        String  codeV= VcodeUtils.vcode();
+        String codeV = DooUtils.makeCode(4);
 
         //将用户专属的token值写入redis中保存    有效时间：1小时
         jedis.setEx(queryuser.getUsername()+"token", codeV,1, TimeUnit.HOURS);
