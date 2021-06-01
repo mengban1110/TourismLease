@@ -13,6 +13,13 @@ import java.util.Map;
 @Repository
 public interface LoginMapper {
 
+    /**
+     * 查询用户
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     @Select("SELECT * FROM employee WHERE username=#{username} AND password=#{password}")
     Employee queryUser(@Param("username") String username, @Param("password") String password);
 

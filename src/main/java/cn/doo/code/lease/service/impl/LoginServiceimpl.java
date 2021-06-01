@@ -22,17 +22,17 @@ public class LoginServiceimpl implements LoginService {
     @Autowired
     private RedisUtil jedis;
 
-
     @Autowired
     private EmailUtils emailUtils;
 
 
     /**
+     * 登录
+     *
      * @param username
      * @param password
      * @param code
      * @return
-     * @desc 登录方法
      */
     @Override
     public Map<String, Object> login(String username, String password, String code) {
@@ -43,7 +43,7 @@ public class LoginServiceimpl implements LoginService {
             return DooUtils.print(-1, "账号或密码错误", null, null);
         }
         //从redis中拿取token值
-        String tokenMessage = jedis.get(username+"token");
+        String tokenMessage = jedis.get(username + "token");
         //值为空则缓存失效，反之成功
         if (tokenMessage != null) {
             if (code.equals(tokenMessage)) {
@@ -57,10 +57,11 @@ public class LoginServiceimpl implements LoginService {
     }
 
     /**
+     * 发送验证码
+     *
      * @param username
      * @param password
      * @return
-     * @desc 发送一个有效时间1h的验证码
      */
     @Override
     public Map<String, Object> verify(String username, String password) {
@@ -75,7 +76,6 @@ public class LoginServiceimpl implements LoginService {
 
         //将用户专属的token值写入redis中保存    有效时间：1小时
         jedis.setEx(queryuser.getUsername() + "token", codeV, 1, TimeUnit.HOURS);
-
 
         emailUtils.sendSimpleMail("421028879@qq.com", "库存收益管理系统-登录验证码", "您的验证码为" + codeV);
 

@@ -22,32 +22,37 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class LoginController {
 
-
-
-
     @Autowired
     private LoginService loginService;
 
-
     /**
      * 发送一个有效时间1h的验证码
+     *
+     * @param username
+     * @param password
+     * @return
      */
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public Map<String, Object> verify(String username, String password) {
-        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return DooUtils.print(-1, "用户名或密码错误", null, null);
         }
 
-        return loginService.verify(username,password);
+        return loginService.verify(username, password);
     }
 
 
     /**
-     * 登录方法
+     * 登录
+     *
+     * @param username
+     * @param password
+     * @param code
+     * @return
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Map<String, Object> login(String username, String password, String code) {
-        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return DooUtils.print(-1, "用户名或密码错误", null, null);
         }
         if (StringUtils.isEmpty(code)) {
@@ -55,7 +60,7 @@ public class LoginController {
         }
         System.out.println("进入");
 
-        return loginService.login(username,password,code);
+        return loginService.login(username, password, code);
     }
 
 
