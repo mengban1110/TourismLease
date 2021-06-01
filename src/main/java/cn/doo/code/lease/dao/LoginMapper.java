@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 
-@Repository("EmployeeMapper")
-public interface EmployeeMapper {
+@Repository
+public interface LoginMapper {
 
     @Select("SELECT * FROM employee WHERE username=#{username} AND password=#{password}")
     Employee queryUser(@Param("username") String username, @Param("password") String password);
