@@ -1,8 +1,10 @@
 package cn.doo.code.lease.entity.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
+@TableName("repertory")
 public class RepertoryPojo {
     /**
      *

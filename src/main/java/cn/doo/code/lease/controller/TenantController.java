@@ -94,7 +94,7 @@ public class TenantController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
+    @RequestMapping(value = "/deleteOne", method = RequestMethod.POST)
     public Map<String, Object> deleteOne(TokenVerify tokenVerify, String id) {
         if (StringUtils.isEmpty(tokenVerify.getToken()) || StringUtils.isEmpty(tokenVerify.getUsername())) {
             return DooUtils.print(-1, "未登录", null, null);
