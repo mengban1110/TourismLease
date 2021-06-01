@@ -33,7 +33,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public Map<String, Object> verify(String username, String password) {
+    public Map<String, Object> verify(String username, String password) throws Exception {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return DooUtils.print(-1, "用户名或密码错误", null, null);
         }

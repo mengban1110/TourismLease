@@ -1,18 +1,26 @@
 package cn.doo.code.utils;
 
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class EmailUtils {
@@ -22,10 +30,11 @@ public class EmailUtils {
 
     /**
      * 普通邮件发送
+     *
      * @param toEmail
      * @param context
      */
-    public void sendSimpleMail(String toEmail,String subject,String context) {
+    public void sendSimpleMail(String toEmail, String subject, String context) {
         // 构建一个邮件对象
         SimpleMailMessage message = new SimpleMailMessage();
         // 设置邮件主题
@@ -48,8 +57,11 @@ public class EmailUtils {
     }
 
 
+
+
     /**
      * html邮件发送 + 附件
+     *
      * @param toEmail
      * @param subject
      * @param context
@@ -57,13 +69,13 @@ public class EmailUtils {
      * @param filename
      * @throws MessagingException
      */
-    public void sendHtmlFileMail(String toEmail,String subject,String context,File file,String filename) throws MessagingException {
+    public void sendHtmlFileMail(String toEmail, String subject, String context, File file, String filename) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
         helper.setSubject(subject);
-        helper.setText(context,true);
-        helper.addAttachment(filename,file);
+        helper.setText(context, true);
+        helper.addAttachment(filename, file);
         helper.setTo(toEmail);
         helper.setFrom("a421028879@163.com");
         javaMailSender.send(mimeMessage);
@@ -72,6 +84,7 @@ public class EmailUtils {
 
     /**
      * 发送html中带图片的
+     *
      * @param toEmail
      * @param subject
      * @param context
@@ -79,7 +92,7 @@ public class EmailUtils {
      * @param filename
      * @throws MessagingException
      */
-    public void sendHtmlImgMail(String toEmail,String subject,String context,File file,String filename) throws MessagingException {
+    public void sendHtmlImgMail(String toEmail, String subject, String context, File file, String filename) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
         helper.setSubject(subject);
@@ -89,9 +102,9 @@ public class EmailUtils {
         //helper.setBcc("14xxxxx098@qq.com");
         helper.setSentDate(new Date());
         // src='cid:p01' 占位符写法 ，第二个参数true表示这是一个html文本
-        helper.setText(context,true);
+        helper.setText(context, true);
         // 第一个参数指的是html中占位符的名字，第二个参数就是文件的位置
-        helper.addInline(filename,file);
+        helper.addInline(filename, file);
         javaMailSender.send(mimeMessage);
     }
 }

@@ -20,6 +20,6 @@ public interface LoginService {
       * @param password
       * @return
       */
-     Map<String, Object> verify(String username, String password);
+     Map<String, Object> verify(String username, String password) throws Exception;
 
 }

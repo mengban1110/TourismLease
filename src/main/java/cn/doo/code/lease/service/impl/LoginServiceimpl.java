@@ -5,8 +5,11 @@ import cn.doo.code.lease.entity.Employee;
 import cn.doo.code.lease.service.LoginService;
 import cn.doo.code.utils.DooUtils;
 import cn.doo.code.utils.EmailUtils;
+import cn.doo.code.utils.FkEmailUtils;
 import cn.doo.code.utils.redis.RedisUtil;
 import com.alibaba.druid.util.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +27,7 @@ public class LoginServiceimpl implements LoginService {
     private RedisUtil jedis;
 
     @Autowired
-    private EmailUtils emailUtils;
+    private FkEmailUtils emailUtils;
 
 
     /**
@@ -47,15 +50,15 @@ public class LoginServiceimpl implements LoginService {
         //token
         String token = DooUtils.getToken(queryuser.getEmail());
         //存token到redis 有效期1小时
-        jedis.setEx("token:"+username,token,1,TimeUnit.HOURS);
+        jedis.setEx("token:" + username, token, 1, TimeUnit.HOURS);
 
 
         //从redis中拿取邮箱验证码  5分钟
-        String verify = jedis.get("verify:"+username);
+        String verify = jedis.get("verify:" + username);
         System.out.println(verify);
 
         //值为空则缓存失效，反之成功
-        if (StringUtils.equals(verify,code)) {
+        if (StringUtils.equals(verify, code)) {
             if (code.equals(verify)) {
                 HashMap<String, Object> stringObjectHashMap = new HashMap<>(3);
                 stringObjectHashMap.put("token", token);
@@ -78,7 +81,7 @@ public class LoginServiceimpl implements LoginService {
      * @return
      */
     @Override
-    public Map<String, Object> verify(String username, String password) {
+    public Map<String, Object> verify(String username, String password) throws Exception {
         //数据库查询用户输入的账号密码是否存在于数据库
         Employee queryuser = loginMapper.queryUser(username, password);
         if (queryuser == null) {
@@ -89,9 +92,10 @@ public class LoginServiceimpl implements LoginService {
         String codeV = DooUtils.makeCode(4);
 
         //将用户专属的token值写入redis中保存    有效时间：5分钟
-        jedis.setEx( "verify:"+queryuser.getUsername(), codeV, 5, TimeUnit.MINUTES);
+        jedis.setEx("verify:" + queryuser.getUsername(), codeV, 5, TimeUnit.MINUTES);
 
-        emailUtils.sendSimpleMail("421028879@qq.com", "库存收益管理系统-登录验证码", "您的验证码为" + codeV);
+        emailUtils.sendVerifyEmail(queryuser.getEmail(), queryuser.getEmail(), codeV);
+
 
         //完成用户校验并成功生成存储验证码，返回给前端
         return DooUtils.print(0, "验证码发送成功", null, null);
