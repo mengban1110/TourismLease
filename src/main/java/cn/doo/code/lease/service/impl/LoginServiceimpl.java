@@ -9,12 +9,14 @@ import cn.doo.code.utils.redis.RedisUtil;
 import com.alibaba.druid.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class LoginServiceimpl implements LoginService {
 
     @Autowired
