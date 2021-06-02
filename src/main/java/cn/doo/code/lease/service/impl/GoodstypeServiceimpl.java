@@ -2,7 +2,6 @@ package cn.doo.code.lease.service.impl;
 
 import cn.doo.code.lease.dao.GoodstypeMapper;
 import cn.doo.code.lease.entity.TokenVerify;
-import cn.doo.code.lease.entity.pojo.EmployeePojo;
 import cn.doo.code.lease.entity.pojo.GoodstypePojo;
 import cn.doo.code.lease.service.GoodstypeService;
 import cn.doo.code.utils.DooUtils;
