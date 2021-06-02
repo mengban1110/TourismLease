@@ -6,6 +6,8 @@ import cn.doo.code.lease.entity.pojo.EmployeePojo;
 import cn.doo.code.lease.service.EmployeeService;
 import cn.doo.code.utils.DooUtils;
 import cn.doo.code.utils.redis.RedisUtil;
+import com.alibaba.druid.util.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,16 @@ public class EmployeeServiceimpl implements EmployeeService {
             return verifyResultMap;
         }
 
+
+        QueryWrapper<EmployeePojo> employeePojoQueryWrapper = new QueryWrapper<>();
+        employeePojoQueryWrapper.eq("name",employeePojo.getName());
+
+        EmployeePojo employee = employeeMapper.selectOne(employeePojoQueryWrapper);
+
+        if (employee!=null){
+            return DooUtils.print(-2,"该用户名已被占用",null,null);
+        }
+
         employeeMapper.insert(employeePojo);
 
         return DooUtils.print(0,"新增成功",null,null);
@@ -84,6 +96,16 @@ public class EmployeeServiceimpl implements EmployeeService {
         if (verifyResultMap != null) {
             return verifyResultMap;
         }
+
+        QueryWrapper<EmployeePojo> employeePojoQueryWrapper = new QueryWrapper<>();
+        employeePojoQueryWrapper.eq("name",employeePojo.getName());
+
+        EmployeePojo employee = employeeMapper.selectOne(employeePojoQueryWrapper);
+
+        if (employee!=null){
+            return DooUtils.print(-2,"该用户名已被占用",null,null);
+        }
+
 
         employeeMapper.updateById(employeePojo);
 
