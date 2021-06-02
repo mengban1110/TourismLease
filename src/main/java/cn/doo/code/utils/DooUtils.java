@@ -2,6 +2,11 @@ package cn.doo.code.utils;
 
 /*import cn.doo.code.order.entity.Order;*/
 
+import cn.doo.code.lease.entity.TokenVerify;
+import cn.doo.code.utils.redis.RedisUtil;
+import com.alibaba.druid.util.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +21,29 @@ import java.util.UUID;
  * @time 2021-05-24-19:44
  */
 public class DooUtils {
+
+
+    /**
+     * 获取token校验
+     * @param tokenVerify
+     * @return
+     */
+    public static Map<String, Object> getTokenVerifyResult(TokenVerify tokenVerify, RedisUtil jedis) {
+        Boolean hasKey = jedis.hasKey(tokenVerify.getRedisKey());
+        //token过期了
+        if (!hasKey) {
+            return DooUtils.print(-1,"未登录",null,null);
+        }
+
+        //获取token 进行对比是否相同
+        String token = jedis.get(tokenVerify.getRedisKey());
+        boolean result = StringUtils.equals(token, tokenVerify.getToken());
+        if (!result) {
+            return DooUtils.print(-1,"未登录",null,null);
+        }
+        return null;
+    }
+
 
     /**
      * 封装的jsonMap

@@ -59,7 +59,7 @@ public class LoginServiceimpl implements LoginService {
             if (code.equals(verify)) {
                 HashMap<String, Object> stringObjectHashMap = new HashMap<>(3);
                 stringObjectHashMap.put("token", token);
-                stringObjectHashMap.put("employeename", queryuser.getUsername());
+                stringObjectHashMap.put("employeename", queryuser.getName());
                 stringObjectHashMap.put("employeeavatar", queryuser.getAvatar());
                 return DooUtils.print(0, "登录成功", stringObjectHashMap, null);
             } else {
@@ -89,7 +89,7 @@ public class LoginServiceimpl implements LoginService {
         String codeV = DooUtils.makeCode(4);
 
         //将用户专属的token值写入redis中保存    有效时间：5分钟
-        jedis.setEx("verify:" + queryuser.getUsername(), codeV, 5, TimeUnit.MINUTES);
+        jedis.setEx("verify:" + queryuser.getName(), codeV, 5, TimeUnit.MINUTES);
 
         emailUtils.sendVerifyEmail(queryuser.getEmail(), queryuser.getEmail(), codeV);
 

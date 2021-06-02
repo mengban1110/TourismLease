@@ -9,6 +9,7 @@ public interface TenantService {
 
     /**
      * 查询所有租赁用户
+     *
      * @param tokenVerify
      * @param page
      * @param limit
@@ -18,6 +19,7 @@ public interface TenantService {
 
     /**
      * 新增一个租赁用户
+     *
      * @param tokenVerify
      * @param tenantPojo
      * @return
@@ -26,6 +28,7 @@ public interface TenantService {
 
     /**
      * 修改一个租赁用户
+     *
      * @param tokenVerify
      * @param tenantPojo
      * @return
@@ -34,6 +37,7 @@ public interface TenantService {
 
     /**
      * 删除一个租赁用户
+     *
      * @param tokenVerify
      * @param id
      * @return

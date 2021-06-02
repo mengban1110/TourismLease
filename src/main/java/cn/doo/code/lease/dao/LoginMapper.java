@@ -17,7 +17,7 @@ public interface LoginMapper {
      * @param password
      * @return
      */
-    @Select("SELECT * FROM employee WHERE username=#{username} AND password=#{password}")
+    @Select("SELECT * FROM employee WHERE name=#{username} AND password=#{password}")
     EmployeePojo queryUser(@Param("username") String username, @Param("password") String password);
 
 }

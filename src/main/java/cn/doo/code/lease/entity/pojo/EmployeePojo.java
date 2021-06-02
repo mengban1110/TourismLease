@@ -10,10 +10,10 @@ import lombok.Data;
 public class EmployeePojo {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
-    private String username;
+    private String name;
     private String password;
     private String email;
     private String avatar;
-    private int level;
+    private Integer level;
 }
 

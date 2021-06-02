@@ -1,65 +1,60 @@
 package cn.doo.code.lease.service.impl;
 
-import cn.doo.code.lease.dao.TenantMapper;
+import cn.doo.code.lease.dao.EmployeeMapper;
 import cn.doo.code.lease.entity.TokenVerify;
-import cn.doo.code.lease.entity.pojo.TenantPojo;
-import cn.doo.code.lease.service.TenantService;
+import cn.doo.code.lease.entity.pojo.EmployeePojo;
+import cn.doo.code.lease.service.EmployeeService;
 import cn.doo.code.utils.DooUtils;
 import cn.doo.code.utils.redis.RedisUtil;
-import com.alibaba.druid.util.StringUtils;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.Map;
 
 @Service
-@Transactional(rollbackFor = Exception.class)
-public class TenantServiceimpl implements TenantService {
+public class EmployeeServiceimpl implements EmployeeService {
+
 
     @Autowired
-    private TenantMapper tenantMapper;
-
+    EmployeeMapper employeeMapper;
     @Autowired
-    private RedisUtil jedis;
+    RedisUtil jedis;
+
 
     /**
+     * @param tokenVerify
      * @param page
      * @param limit
      * @return
-     * @desc 查询所有租赁用户
+     * @desc 获取所有人事
      */
     @Override
     public Map<String, Object> queryAll(TokenVerify tokenVerify, Integer page, Integer limit) {
-
         /**
          * 对比token
          */
-        Map<String, Object> verifyResultMap = DooUtils.getTokenVerifyResult(tokenVerify,jedis);
+        Map<String, Object> verifyResultMap = DooUtils.getTokenVerifyResult(tokenVerify, jedis);
         if (verifyResultMap != null) {
             return verifyResultMap;
         }
 
-        /**
-         * 查询所有
-         */
-        IPage<TenantPojo> pagez = new Page<>(page, limit);
-        IPage<TenantPojo> tenantPojoIPage = tenantMapper.selectPage(pagez, null);
+        IPage<EmployeePojo> pagez = new Page<>(page, limit);
+        IPage<EmployeePojo> employeePojoIPage = employeeMapper.selectPage(pagez, null);
 
-        return DooUtils.print(0,"请求成功",tenantPojoIPage.getRecords(),tenantPojoIPage.getTotal());
+        return DooUtils.print(0, "请求成功", employeePojoIPage.getRecords(), null);
     }
 
-
     /**
-     * 新增一个租赁用户
+     * @desc 新增一个人事
      * @param tokenVerify
-     * @param tenantPojo
+     * @param employeePojo
      * @return
      */
     @Override
-    public Map<String, Object> insertOne(TokenVerify tokenVerify,TenantPojo tenantPojo) {
+    public Map<String, Object> insertOne(TokenVerify tokenVerify, EmployeePojo employeePojo) {
         /**
          * 对比token
          */
@@ -68,23 +63,19 @@ public class TenantServiceimpl implements TenantService {
             return verifyResultMap;
         }
 
-        /**
-         * 添加租户信息
-         */
-        tenantMapper.insert(tenantPojo);
+        employeeMapper.insert(employeePojo);
 
         return DooUtils.print(0,"新增成功",null,null);
     }
 
     /**
-     * 修改一个租赁用户
-     *
      * @param tokenVerify
-     * @param tenantPojo
+     * @param employeePojo
      * @return
+     * @desc 修改一个人事
      */
     @Override
-    public Map<String, Object> updateOne(TokenVerify tokenVerify, TenantPojo tenantPojo) {
+    public Map<String, Object> updateOne(TokenVerify tokenVerify, EmployeePojo employeePojo) {
         /**
          * 对比token
          */
@@ -93,22 +84,19 @@ public class TenantServiceimpl implements TenantService {
             return verifyResultMap;
         }
 
-        /**
-         * 修改租户信息
-         */
-        tenantMapper.updateById(tenantPojo);
+        employeeMapper.updateById(employeePojo);
 
         return DooUtils.print(0,"修改成功",null,null);
-
     }
 
     /**
+     * @param tokenVerify
      * @param id
      * @return
-     * @desc 删除一个租赁用户
+     * @desc 删除一个人事
      */
     @Override
-    public Map<String, Object> deleteOne(TokenVerify tokenVerify, String id) {
+    public Map<String, Object> deleteOne(TokenVerify tokenVerify, Integer id) {
         /**
          * 对比token
          */
@@ -117,11 +105,9 @@ public class TenantServiceimpl implements TenantService {
             return verifyResultMap;
         }
 
-        tenantMapper.deleteById(id);
+
+        employeeMapper.deleteById(id);
+
         return DooUtils.print(0,"删除成功",null,null);
     }
-
-
-
-
 }
