@@ -5,15 +5,16 @@ package cn.doo.code.utils;
 import cn.doo.code.lease.entity.TokenVerify;
 import cn.doo.code.utils.redis.RedisUtil;
 import com.alibaba.druid.util.StringUtils;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.apache.commons.io.FileUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author 梦伴
@@ -22,9 +23,68 @@ import java.util.UUID;
  */
 public class DooUtils {
 
+    /**
+     * 上传图片到本地服务器 并 返回图片名字
+     *
+     * @param file
+     * @param request
+     * @return
+     */
+    public static String uploadPhotoAndReturnName(MultipartFile file, HttpServletRequest request) {
+        String filename = "";
+        if (!file.isEmpty()) {
+            // 文件的真实名称
+            String realFilename = file.getOriginalFilename();
+            // 获取文件格式后缀名
+            String type = Objects.requireNonNull(file.getOriginalFilename()).substring(realFilename.indexOf("."));
+            // 取当前时间戳作为文件名
+            filename = System.currentTimeMillis() + type;
+            // 存放位置
+            String path = request.getSession().getServletContext().getRealPath("/upload/" + filename);
+            System.out.println("-------------------->" + path);
+
+            File destFile = new File(path);
+            try {
+                // 复制临时文件到指定目录下
+                FileUtils.copyInputStreamToFile(file.getInputStream(), destFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return filename;
+    }
+
+
+    /***
+     * 下载图片
+     *
+     * @return
+     * @throws IOException
+     */
+    public static void downloadPhoto(HttpServletRequest request, HttpServletResponse response, String fileName) throws IOException {
+        System.out.println("fileName = " + fileName);
+        // 设定本次请求的响应头意思为html文本格式，
+        response.setContentType("text/html;charset=utf-8");
+        // 因为我们最终的图片是要显示在html页面中的，且编码集为UTF-8
+        response.setHeader("Content-Disposition", "attachment;fileName=" + fileName);
+        String path = request.getSession().getServletContext().getRealPath("") + "/upload/" + fileName;
+        File tempFile = new File(path);
+        InputStream inputStream = new FileInputStream(tempFile);
+        OutputStream os = response.getOutputStream();
+        byte[] b = new byte[2048];
+        int length;
+        while ((length = inputStream.read(b)) > 0) {
+            os.write(b, 0, length);
+        }
+        os.flush();
+        os.close();
+        inputStream.close();
+    }
+
 
     /**
-     * 获取token校验
+     * 获取token校验  Redis : token:mengban
+     *
      * @param tokenVerify
      * @return
      */
@@ -32,14 +92,14 @@ public class DooUtils {
         Boolean hasKey = jedis.hasKey(tokenVerify.getRedisKey());
         //token过期了
         if (!hasKey) {
-            return DooUtils.print(-1,"未登录",null,null);
+            return DooUtils.print(-1, "未登录", null, null);
         }
 
         //获取token 进行对比是否相同
         String token = jedis.get(tokenVerify.getRedisKey());
         boolean result = StringUtils.equals(token, tokenVerify.getToken());
         if (!result) {
-            return DooUtils.print(-1,"未登录",null,null);
+            return DooUtils.print(-1, "未登录", null, null);
         }
         return null;
     }
@@ -54,7 +114,7 @@ public class DooUtils {
      * @return
      */
     public static Map<String, Object> print(int code, String msg, Object data, Object count) {
-            HashMap<String, Object> map = new HashMap<String, Object>(4);
+        HashMap<String, Object> map = new HashMap<String, Object>(4);
         map.put("code", code);
         map.put("msg", msg);
         if (data != null) {

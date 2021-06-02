@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.util.Map;
 
 @Service
@@ -60,7 +59,7 @@ public class EmployeeServiceimpl implements EmployeeService {
         /**
          * 对比token
          */
-        Map<String, Object> verifyResultMap = DooUtils.getTokenVerifyResult(tokenVerify,jedis);
+        Map<String, Object> verifyResultMap = DooUtils.getTokenVerifyResult(tokenVerify, jedis);
         if (verifyResultMap != null) {
             return verifyResultMap;
         }
