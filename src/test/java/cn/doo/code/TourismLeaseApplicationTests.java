@@ -1,27 +1,19 @@
 package cn.doo.code;
 
 import cn.doo.code.lease.dao.LeaseMapper;
-import cn.doo.code.lease.dao.RepertoryMapper;
 import cn.doo.code.lease.entity.Leaseinfo;
-import cn.doo.code.lease.entity.TokenVerify;
+import cn.doo.code.lease.entity.pojo.LeasePojo;
 import cn.doo.code.lease.service.LeaseService;
-import cn.doo.code.utils.solr.SolrUtil;
-import cn.doo.code.utils.solr.entity.DataEntity;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest
 class TourismLeaseApplicationTests {
@@ -30,8 +22,8 @@ class TourismLeaseApplicationTests {
 //    private StringRedisTemplate redisTemplate;
 //    @Autowired
 //    private RepertoryMapper repertoryMapper;
-//    @Autowired
-//    private LeaseMapper leaseMapper;
+    @Autowired
+    private LeaseMapper leaseMapper;
 
 
 //    @Autowired
@@ -43,11 +35,19 @@ class TourismLeaseApplicationTests {
 
     @Test
     void contextLoads() throws IOException, SQLException, SolrServerException, ClassNotFoundException {
+        LeasePojo leasePojo = leaseMapper.selectById(22);
+        //获取租赁信息
+        String leaseinfo = leasePojo.getLeaseinfo();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Leaseinfo> list = objectMapper.readValue(leaseinfo, new TypeReference<List<Leaseinfo>>() {});
 
-
-        String uuid = IdUtil.simpleUUID();
-
-        System.out.println(StrUtil.sub(uuid,0,6));
+        System.out.println("list = " + list);
+        System.out.println("list = " + list);
+        System.out.println("list = " + list);
+//
+//        String uuid = IdUtil.simpleUUID();
+//
+//        System.out.println(StrUtil.sub(uuid,0,6));
 
 
 //        TokenVerify tokenVerify = new TokenVerify();

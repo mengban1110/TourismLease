@@ -1,14 +1,13 @@
 package cn.doo.code.lease.controller;
 
+import cn.doo.code.lease.entity.Leaseinfo;
 import cn.doo.code.lease.entity.TokenVerify;
 import cn.doo.code.lease.entity.pojo.LeaseinfoPojo;
 import cn.doo.code.lease.service.LeaseService;
 import cn.doo.code.utils.DooUtils;
 import com.alibaba.druid.util.StringUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +54,7 @@ public class LeaseController {
 
 
     @RequestMapping(value = "/insertOne")
-    public Map<String, Object> test(TokenVerify tokenVerify, @RequestBody List<LeaseinfoPojo> leaseinfoPojo, Integer uid) throws Exception {
+    public Map<String, Object> insertOne(TokenVerify tokenVerify, @RequestBody List<LeaseinfoPojo> leaseinfoPojo, Integer uid) throws Exception {
         if (StringUtils.isEmpty(tokenVerify.getToken()) || StringUtils.isEmpty(tokenVerify.getUsername())) {
             return DooUtils.print(-1, "未登录", null, null);
         }
@@ -70,6 +69,36 @@ public class LeaseController {
 
 
         return leaseService.insertOne(tokenVerify,leaseinfoPojo,uid);
+    }
+
+    @RequestMapping(value = "/updateOne")
+    public Map<String, Object> updateOne(TokenVerify tokenVerify, @RequestBody List<Leaseinfo> leaseinfos, Integer id) throws Exception {
+        if (StringUtils.isEmpty(tokenVerify.getToken()) || StringUtils.isEmpty(tokenVerify.getUsername())) {
+            return DooUtils.print(-1, "未登录", null, null);
+        }
+
+        if (leaseinfos.size()==0 || leaseinfos==null){
+            return DooUtils.print(-2,"参数异常",null,null);
+        }
+
+        if (id == null) {
+            return DooUtils.print(-2,"参数异常",null,null);
+        }
+
+        return leaseService.updateOne(tokenVerify,leaseinfos,id);
+    }
+
+    @RequestMapping(value = "/deleteOne")
+    public Map<String, Object> deleteOne(TokenVerify tokenVerify,Integer id) throws Exception {
+        if (StringUtils.isEmpty(tokenVerify.getToken()) || StringUtils.isEmpty(tokenVerify.getUsername())) {
+            return DooUtils.print(-1, "未登录", null, null);
+        }
+
+        if (id == null) {
+            return DooUtils.print(-2,"参数异常",null,null);
+        }
+
+        return leaseService.deleteOne(tokenVerify,id);
     }
 
 }

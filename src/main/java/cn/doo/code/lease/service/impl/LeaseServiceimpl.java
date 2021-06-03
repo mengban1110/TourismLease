@@ -18,6 +18,7 @@ import cn.doo.code.utils.solr.entity.DataEntity;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -42,7 +45,7 @@ public class LeaseServiceimpl implements LeaseService {
     private PlatformTransactionManager platformTransactionManager;
     @Autowired
     private TransactionDefinition transactionDefinition;
-    private Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
 
     @Autowired
@@ -50,7 +53,7 @@ public class LeaseServiceimpl implements LeaseService {
     @Autowired
     private RedisUtil jedis;
     @Autowired
-    private SolrUtil SolrUtil;
+    private SolrUtil solrUtil;
     @Autowired
     private RepertoryMapper repertoryMapper;
     @Autowired
@@ -76,8 +79,8 @@ public class LeaseServiceimpl implements LeaseService {
             return verifyResultMap;
         }
 
-        List<DataEntity> dataEntities = SolrUtil.queryIndexItems(page, limit, phone);
-        int count = SolrUtil.queryIndexCount(phone);
+        List<DataEntity> dataEntities = solrUtil.queryIndexItems(page, limit, phone);
+        int count = solrUtil.queryIndexCount(phone);
 
         return DooUtils.print(0, "请求成功", dataEntities, count);
     }
@@ -162,18 +165,169 @@ public class LeaseServiceimpl implements LeaseService {
 
         SolrBaseModules.saveOrUpdate(new DataEntity(leasePojo, tenantMapper.selectById(uid)));
 
-        return DooUtils.print(0, "添加成功", null, null);
+        return DooUtils.print(0, "添加成功", sumDeposit, null);
     }
 
 
+    /**
+     * 结束租赁
+     * @param tokenVerify
+     * @param leaseinfos
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> updateOne(TokenVerify tokenVerify, List<Leaseinfo> leaseinfos, Integer id) throws Exception {
+
+        /**
+         * 对比token
+         */
+        Map<String, Object> verifyResultMap = DooUtils.getTokenVerifyResult(tokenVerify, jedis);
+        if (verifyResultMap != null) {
+            return verifyResultMap;
+        }
+
+        //获取订单信息
+        LeasePojo leasePojo = leaseMapper.selectById(id);
+        if (leasePojo == null) {
+            return DooUtils.print(-2, "参数异常", null, null);
+        }
 
 
+        //获取租赁信息
+        String leaseinfo = leasePojo.getLeaseinfo();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Leaseinfo> list = objectMapper.readValue(leaseinfo, new TypeReference<List<Leaseinfo>>() {});
 
-    
+        System.out.println("list = " + list);
+        System.out.println("list = " + list);
+        System.out.println("list = " + list);
 
 
+        //存放租金
+        AtomicInteger result = new AtomicInteger();
+
+        //事务对象
+        TransactionStatus transaction = platformTransactionManager.getTransaction(transactionDefinition);
+        //开启锁
+        lock.lock();
+        try {
+            list.forEach(item -> {
+                //租赁的商品id
+                Integer lid = item.getId();
+                //租赁的个数
+                int size = item.getNumber().size();
+
+                //获取对应商品对象
+                RepertoryPojo repertoryPojo = repertoryMapper.selectById(lid);
+                //获取单价
+                Integer unitprice = repertoryPojo.getUnitprice();
+
+                //计算游玩几小时
+                long startTime = leasePojo.getCreatetime().getTime();
+                long endTime = System.currentTimeMillis() - startTime;
+                int playTimeCount = countTime(endTime, 0);
+
+                //获取总价
+                int sum = size * unitprice * playTimeCount;
+                result.addAndGet(sum);
 
 
+                leasePojo.setRent(result.get());
+                leasePojo.setEndtime(new Date());
+                leasePojo.setStatus(1);
+
+                //是否有损坏
+                AtomicBoolean flag = new AtomicBoolean(false);
+                leaseinfos.forEach(obj->{
+                    if (obj.getNumber().size() != 0) {
+                        flag.set(true);
+                    }
+                });
+
+
+                //有损坏
+                if (flag.get()) {
+                    try {
+                        //设置损坏信息
+                        leasePojo.setBreakinfo(objectMapper.writeValueAsString(leaseinfos));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+
+                    leaseinfos.forEach(temp->{
+                        //如果是这个类型 则取出损坏数量
+                        if (temp.getId().equals(lid)) {
+                            //设置归还数量
+                            repertoryPojo.setCount(repertoryPojo.getCount() + size - temp.getNumber().size());
+                        }
+                    });
+
+                } else {
+                    leasePojo.setBreakinfo("null");
+                    //设置归还数量
+                    repertoryPojo.setCount(repertoryPojo.getCount() + size);
+                }
+
+                leaseMapper.updateById(leasePojo);
+                repertoryMapper.updateById(repertoryPojo);
+            });
+            System.out.println("没有异常，准备提交事务");
+            platformTransactionManager.commit(transaction);
+        } catch (Exception e) {
+            System.out.println("有异常，准备回滚所有事务");
+            e.printStackTrace();
+            platformTransactionManager.rollback(transaction);
+            return DooUtils.print(-5, "服务器内部错误", null, null);
+        } finally {
+            lock.unlock();
+        }
+
+        //更新索引
+        SolrBaseModules.saveOrUpdate(new DataEntity(leasePojo, tenantMapper.selectById(leasePojo.getUid())));
+
+        return DooUtils.print(0, "结束成功", null, null);
+    }
+
+    /**
+     * 删除订单
+     *
+     * @param tokenVerify
+     * @param id
+     * @return
+     */
+    @Override
+    public Map<String, Object> deleteOne(TokenVerify tokenVerify, Integer id) {
+        /**
+         * 对比token
+         */
+        Map<String, Object> verifyResultMap = DooUtils.getTokenVerifyResult(tokenVerify, jedis);
+        if (verifyResultMap != null) {
+            return verifyResultMap;
+        }
+
+        leaseMapper.deleteById(id);
+
+        return DooUtils.print(0, "删除成功", null, null);
+    }
+
+    /**
+     * 计算游玩几小时
+     *
+     * @param timing
+     * @return
+     */
+    private static int countTime(long timing, int count) {
+        if (timing < 1000 * 60 * 20) {
+            return count;
+        } else if (timing < 1000 * 60 * 60) {
+            return ++count;
+        } else {
+            timing -= 1000 * 60 * 60;
+            return countTime(timing, ++count);
+        }
+    }
 
 
     /**
