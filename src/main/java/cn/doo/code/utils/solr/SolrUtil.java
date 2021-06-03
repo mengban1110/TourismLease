@@ -53,7 +53,7 @@ public class SolrUtil {
      * @throws IOException
      * @throws SolrServerException
      */
-    @Scheduled(cron = "*/5 * * * * ? ")
+    @Scheduled(cron = "0 0 0 1/1 * ?")
     public static void quartzJob() throws IOException, SolrServerException, SQLException, ClassNotFoundException {
         List<DataEntity> dataEntities = SolrUtil.dataService.initIndex();
         System.out.println("dataEntities = " + dataEntities);
