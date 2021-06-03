@@ -6,6 +6,7 @@ import cn.doo.code.utils.solr.service.DataService;
 import com.alibaba.druid.util.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -52,6 +53,7 @@ public class SolrUtil {
      * @throws IOException
      * @throws SolrServerException
      */
+    @Scheduled(cron = "*/5 * * * * ? ")
     public static void quartzJob() throws IOException, SolrServerException, SQLException, ClassNotFoundException {
         List<DataEntity> dataEntities = SolrUtil.dataService.initIndex();
         System.out.println("dataEntities = " + dataEntities);

@@ -309,6 +309,8 @@ public class LeaseServiceimpl implements LeaseService {
 
         leaseMapper.deleteById(id);
 
+        SolrBaseModules.deleteById(id+"");
+
         return DooUtils.print(0, "删除成功", null, null);
     }
 
