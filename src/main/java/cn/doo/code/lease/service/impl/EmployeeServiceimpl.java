@@ -22,9 +22,9 @@ public class EmployeeServiceimpl implements EmployeeService {
 
 
     @Autowired
-    EmployeeMapper employeeMapper;
+    private EmployeeMapper employeeMapper;
     @Autowired
-    RedisUtil jedis;
+    private RedisUtil jedis;
 
 
     /**

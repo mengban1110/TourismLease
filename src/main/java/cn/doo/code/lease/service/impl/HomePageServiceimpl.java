@@ -20,9 +20,9 @@ public class HomePageServiceimpl implements HomePageService {
 
 
     @Autowired
-    HomePageMapper homePageMapper;
+    private HomePageMapper homePageMapper;
     @Autowired
-    RedisUtil jedis;
+    private RedisUtil jedis;
 
 
     @Override

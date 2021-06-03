@@ -19,7 +19,7 @@ import java.util.Map;
 public class HomePageController {
 
     @Autowired
-    HomePageService homePageService;
+    private HomePageService homePageService;
 
 
     @RequestMapping(value = "/getinfo",method = RequestMethod.GET)

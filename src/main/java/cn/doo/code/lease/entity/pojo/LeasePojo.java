@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.util.Date;
 
+
 @Data
 @TableName("lease")
 public class LeasePojo {

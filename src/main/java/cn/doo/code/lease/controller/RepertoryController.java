@@ -23,7 +23,7 @@ import java.util.Map;
 public class RepertoryController {
 
     @Autowired
-    RepertoryService repertoryService;
+    private RepertoryService repertoryService;
 
     /**
      * @param tokenVerify

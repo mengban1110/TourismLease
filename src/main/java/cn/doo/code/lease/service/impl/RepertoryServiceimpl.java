@@ -21,11 +21,11 @@ public class RepertoryServiceimpl implements RepertoryService {
 
 
     @Autowired
-    GoodstypeMapper goodstypeMapper;
+    private GoodstypeMapper goodstypeMapper;
     @Autowired
-    RepertoryMapper repertoryMapper;
+    private RepertoryMapper repertoryMapper;
     @Autowired
-    RedisUtil jedis;
+    private RedisUtil jedis;
 
     /**
      * @param tokenVerify

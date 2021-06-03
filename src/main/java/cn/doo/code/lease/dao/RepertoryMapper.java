@@ -13,15 +13,15 @@ import java.util.Map;
 public interface RepertoryMapper extends BaseMapper<RepertoryPojo> {
 
     @Results({
-            @Result(column = "id",property = "id"),
-            @Result(column = "name",property = "name"),
-            @Result(column = "count",property = "count"),
-            @Result(column = "monet",property = "money"),
-            @Result(column = "unitdeposit",property = "unitdeposit"),
-            @Result(column = "unitprice",property = "unitprice"),
-            @Result(column = "type",property = "type",one = @One(select = "cn.doo.code.lease.dao.GoodstypeMapper.selectById"))
+            @Result(column = "id", property = "id"),
+            @Result(column = "name", property = "name"),
+            @Result(column = "count", property = "count"),
+            @Result(column = "monet", property = "money"),
+            @Result(column = "unitdeposit", property = "unitdeposit"),
+            @Result(column = "unitprice", property = "unitprice"),
+            @Result(column = "type", property = "type", one = @One(select = "cn.doo.code.lease.dao.GoodstypeMapper.selectById"))
     })
     @Select("SELECT * FROM repertory limit #{page},#{limit}")
-    List<Map<String,Object>> queryAll(@Param("page")Integer page,@Param("limit")Integer limit);
+    List<Map<String, Object>> queryAll(@Param("page") Integer page, @Param("limit") Integer limit);
 
 }

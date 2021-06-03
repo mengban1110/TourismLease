@@ -20,7 +20,7 @@ import java.util.Map;
 public class GoodstypeController {
 
     @Autowired
-    GoodstypeService goodstypeService;
+    private GoodstypeService goodstypeService;
 
 
     /**

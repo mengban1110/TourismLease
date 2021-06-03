@@ -20,9 +20,9 @@ import java.util.Map;
 public class GoodstypeServiceimpl implements GoodstypeService {
 
     @Autowired
-    GoodstypeMapper goodstypeMapper;
+    private GoodstypeMapper goodstypeMapper;
     @Autowired
-    RedisUtil jedis;
+    private RedisUtil jedis;
 
     /**
      * @param tokenVerify

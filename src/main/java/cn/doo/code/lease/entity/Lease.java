@@ -20,7 +20,7 @@ public class Lease {
     /**
      *
      */
-    private TenantPojo tenant;
+    private TenantPojo user;
 
     /**
      *
