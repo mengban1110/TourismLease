@@ -35,7 +35,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
-//@Transactional(rollbackFor = Exception.class)
+//@Transactional(rollbackFor = Exception.class) 不能统一事务管理 否则会冲突
 public class LeaseServiceimpl implements LeaseService {
 
     @Autowired
@@ -105,13 +105,8 @@ public class LeaseServiceimpl implements LeaseService {
             return DooUtils.print(-2, "参数异常", null, null);
         }
 
-
-        lock.lock();
-        //事务对象
-        TransactionStatus transaction = platformTransactionManager.getTransaction(transactionDefinition);
-
+        //初始化
         LeasePojo leasePojo;
-
         //总押金
         Integer sumDeposit = 0;
         //Leaseinfo对象
@@ -119,6 +114,10 @@ public class LeaseServiceimpl implements LeaseService {
         /**
          * 计算总押金 并 获取Leaseinfos整体对象
          */
+        //事务对象
+        TransactionStatus transaction = platformTransactionManager.getTransaction(transactionDefinition);
+        //开启锁
+        lock.lock();
         try {
             for (LeaseinfoPojo leaseinfoPojo : leaseinfo) {
 
@@ -153,11 +152,11 @@ public class LeaseServiceimpl implements LeaseService {
             System.out.println("没有异常，准备提交事务");
             platformTransactionManager.commit(transaction);
         } catch (Exception e) {
-            System.out.println("有异常，准备回滚事务");
+            System.out.println("有异常，准备回滚所有事务");
             e.printStackTrace();
             platformTransactionManager.rollback(transaction);
             return DooUtils.print(-2, "参数异常", null, null);
-        }finally {
+        } finally {
             lock.unlock();
         }
 
@@ -166,8 +165,20 @@ public class LeaseServiceimpl implements LeaseService {
         return DooUtils.print(0, "添加成功", null, null);
     }
 
+
+
+
+
+    
+
+
+
+
+
+
     /**
      * 减少库存
+     *
      * @param leaseinfoPojo
      * @throws Exception
      */
