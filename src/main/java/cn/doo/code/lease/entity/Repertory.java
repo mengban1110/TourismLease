@@ -38,7 +38,7 @@ public class Repertory {
     /**
      *
      */
-    private GoodstypePojo goodstype;
+    private GoodstypePojo type;
 
 }
 
