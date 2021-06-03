@@ -14,7 +14,7 @@ import java.util.Map;
 
 
 @RequestMapping("/api/homepage")
-@CrossOrigin
+@CrossOrigin("*")
 @RestController
 public class HomePageController {
 

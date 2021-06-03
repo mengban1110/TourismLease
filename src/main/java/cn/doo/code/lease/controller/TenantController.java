@@ -6,6 +6,7 @@ import cn.doo.code.lease.service.TenantService;
 import cn.doo.code.utils.DooUtils;
 import com.alibaba.druid.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @desc
  * @time 2021-06-01-23:09
  */
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/tenant")
 public class TenantController {

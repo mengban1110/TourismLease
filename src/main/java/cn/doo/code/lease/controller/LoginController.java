@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RequestMapping("/api/login")
-@CrossOrigin
+@CrossOrigin("*")
 @RestController
 public class LoginController {
 

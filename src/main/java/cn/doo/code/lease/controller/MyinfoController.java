@@ -19,7 +19,7 @@ import java.util.Map;
  * @desc
  * @time 2021-06-02-10:15
  */
-@CrossOrigin
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/myinfo")
 public class MyinfoController {
