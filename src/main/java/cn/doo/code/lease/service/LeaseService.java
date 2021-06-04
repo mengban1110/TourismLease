@@ -5,6 +5,7 @@ import cn.doo.code.lease.entity.TokenVerify;
 import cn.doo.code.lease.entity.pojo.LeaseinfoPojo;
 import org.apache.solr.client.solrj.SolrServerException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -49,4 +50,12 @@ public interface LeaseService {
      * @return
      */
     Map<String, Object> deleteOne(TokenVerify tokenVerify, Integer id);
+
+    /**
+     * 下载收据
+     * @param tokenVerify
+     * @param id
+     * @return
+     */
+    Map<String, Object> download(TokenVerify tokenVerify, Integer id, HttpServletResponse response) throws IOException;
 }

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -43,8 +42,7 @@ public class RepertoryServiceimpl implements RepertoryService {
         if (verifyResultMap != null) {
             return verifyResultMap;
         }
-        List<Map<String, Object>> list = repertoryMapper.queryAll(page, limit);
-        return DooUtils.print(0, "请求成功", list, 5);
+        return DooUtils.print(0, "请求成功", repertoryMapper.queryAll(page, limit), repertoryMapper.selectCount(null));
     }
 
     /**

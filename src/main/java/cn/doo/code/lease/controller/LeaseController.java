@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ public class LeaseController {
 
 
     /**
-     * @desc 获取所有租赁商品信息
      * @param tokenVerify
      * @param page
      * @param limit
@@ -35,6 +35,7 @@ public class LeaseController {
      * @return
      * @throws SolrServerException
      * @throws IOException
+     * @desc 获取所有租赁商品信息
      */
     @RequestMapping("/queryAll")
     public Map<String, Object> queryAll(TokenVerify tokenVerify, Integer page, Integer limit, String phone) throws SolrServerException, IOException {
@@ -59,16 +60,16 @@ public class LeaseController {
             return DooUtils.print(-1, "未登录", null, null);
         }
 
-        if (leaseinfoPojo.size()==0 || leaseinfoPojo==null){
-            return DooUtils.print(-2,"参数异常",null,null);
+        if (leaseinfoPojo.size() == 0 || leaseinfoPojo == null) {
+            return DooUtils.print(-2, "参数异常", null, null);
         }
 
         if (uid == null) {
-            return DooUtils.print(-2,"参数异常",null,null);
+            return DooUtils.print(-2, "参数异常", null, null);
         }
 
 
-        return leaseService.insertOne(tokenVerify,leaseinfoPojo,uid);
+        return leaseService.insertOne(tokenVerify, leaseinfoPojo, uid);
     }
 
     @RequestMapping(value = "/updateOne")
@@ -77,28 +78,51 @@ public class LeaseController {
             return DooUtils.print(-1, "未登录", null, null);
         }
 
-        if (leaseinfos.size()==0 || leaseinfos==null){
-            return DooUtils.print(-2,"参数异常",null,null);
+        if (leaseinfos.size() == 0 || leaseinfos == null) {
+            return DooUtils.print(-2, "参数异常", null, null);
         }
 
         if (id == null) {
-            return DooUtils.print(-2,"参数异常",null,null);
+            return DooUtils.print(-2, "参数异常", null, null);
         }
 
-        return leaseService.updateOne(tokenVerify,leaseinfos,id);
+        return leaseService.updateOne(tokenVerify, leaseinfos, id);
     }
 
     @RequestMapping(value = "/deleteOne")
-    public Map<String, Object> deleteOne(TokenVerify tokenVerify,Integer id) throws Exception {
+    public Map<String, Object> deleteOne(TokenVerify tokenVerify, Integer id) throws Exception {
         if (StringUtils.isEmpty(tokenVerify.getToken()) || StringUtils.isEmpty(tokenVerify.getUsername())) {
             return DooUtils.print(-1, "未登录", null, null);
         }
 
         if (id == null) {
-            return DooUtils.print(-2,"参数异常",null,null);
+            return DooUtils.print(-2, "参数异常", null, null);
         }
 
-        return leaseService.deleteOne(tokenVerify,id);
+        return leaseService.deleteOne(tokenVerify, id);
     }
+
+
+    /**
+     * 收据条
+     *
+     * @param tokenVerify
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/download")
+    public Map<String, Object> download(TokenVerify tokenVerify, Integer id, HttpServletResponse response) throws Exception {
+        if (StringUtils.isEmpty(tokenVerify.getToken()) || StringUtils.isEmpty(tokenVerify.getUsername())) {
+            return DooUtils.print(-1, "未登录", null, null);
+        }
+
+        if (id == null) {
+            return DooUtils.print(-2, "参数异常", null, null);
+        }
+
+        return leaseService.download(tokenVerify, id, response);
+    }
+
 
 }

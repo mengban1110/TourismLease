@@ -3,14 +3,17 @@ package cn.doo.code.lease.service.impl;
 import cn.doo.code.lease.dao.LeaseMapper;
 import cn.doo.code.lease.dao.RepertoryMapper;
 import cn.doo.code.lease.dao.TenantMapper;
+import cn.doo.code.lease.entity.Lease;
 import cn.doo.code.lease.entity.Leaseinfo;
 import cn.doo.code.lease.entity.TokenVerify;
+import cn.doo.code.lease.entity.empinfo;
 import cn.doo.code.lease.entity.pojo.LeasePojo;
 import cn.doo.code.lease.entity.pojo.LeaseinfoPojo;
 import cn.doo.code.lease.entity.pojo.RepertoryPojo;
 import cn.doo.code.lease.entity.pojo.TenantPojo;
 import cn.doo.code.lease.service.LeaseService;
 import cn.doo.code.utils.DooUtils;
+import cn.doo.code.utils.FkExcelUtils;
 import cn.doo.code.utils.redis.RedisUtil;
 import cn.doo.code.utils.solr.SolrBaseModules;
 import cn.doo.code.utils.solr.SolrUtil;
@@ -20,6 +23,7 @@ import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import freemarker.template.Configuration;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,11 +31,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -101,6 +105,10 @@ public class LeaseServiceimpl implements LeaseService {
         Map<String, Object> verifyResultMap = DooUtils.getTokenVerifyResult(tokenVerify, jedis);
         if (verifyResultMap != null) {
             return verifyResultMap;
+        }
+
+        if (leaseinfo.size() > 7) {
+            return DooUtils.print(-2, "租赁样式过多,请分批次租赁", null, null);
         }
 
         TenantPojo tenantPojo = tenantMapper.selectById(uid);
@@ -233,7 +241,6 @@ public class LeaseServiceimpl implements LeaseService {
                 int sum = size * unitprice * playTimeCount;
                 result.addAndGet(sum);
 
-
                 leasePojo.setRent(result.get());
                 leasePojo.setEndtime(new Date());
                 leasePojo.setStatus(1);
@@ -313,6 +320,96 @@ public class LeaseServiceimpl implements LeaseService {
 
         return DooUtils.print(0, "删除成功", null, null);
     }
+
+
+    /**
+     * 下载收据
+     *
+     * @param tokenVerify
+     * @param id
+     * @return
+     */
+    @Override
+    public Map<String, Object> download(TokenVerify tokenVerify, Integer id, HttpServletResponse response) throws IOException {
+
+        //存储
+        Map<String, Object> hashMap = new HashMap<>();
+
+        /**
+         * 对比token
+         */
+        Map<String, Object> verifyResultMap = DooUtils.getTokenVerifyResult(tokenVerify, jedis);
+        if (verifyResultMap != null) {
+            return verifyResultMap;
+        }
+
+        //获取订单对象
+        Lease lease = leaseMapper.queryOne(id);
+        if (lease == null) {
+            return DooUtils.print(-2, "暂无此订单", null, null);
+        }
+
+        //获取租赁信息
+        String leaseinfo = lease.getLeaseinfo();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //获取租赁订单对象
+        List<Leaseinfo> leaseinfos = objectMapper.readValue(leaseinfo, new TypeReference<List<Leaseinfo>>() {
+        });
+
+        //获取对象
+        List<empinfo> arr = new ArrayList();
+
+        AtomicInteger sum = new AtomicInteger();
+        //获取对应商品的价格
+        leaseinfos.forEach(item->{
+            //商品id
+            Integer tempId = item.getId();
+
+            RepertoryPojo repertoryPojo = repertoryMapper.selectById(tempId);
+
+            //获取商品名字
+            String name = repertoryPojo.getName();
+            //获取对应商品id的每件租金
+            Integer unitdeposit = repertoryPojo.getUnitdeposit();
+            //商品数量
+            int size = item.getNumber().size();
+
+            sum.addAndGet(unitdeposit * size);
+
+            arr.add(new empinfo(name, unitdeposit, size));
+
+        });
+
+        //租户信息
+        TenantPojo user = lease.getUser();
+
+
+        SimpleDateFormat sformat = new SimpleDateFormat("yyyy-MM-dd");//日期格式
+        String item = sformat.format(lease.getCreatetime());
+
+        //存放FK所需数据
+        hashMap.put("empinfo", arr);
+        hashMap.put("user", user);
+        hashMap.put("time", item);
+        hashMap.put("money", sum.get());
+
+
+        System.out.println(hashMap);
+
+        //设置fk路径目录
+        String ftl = "E:\\ProgramCode\\IDEA_Code\\LearnWorkingSet\\D20210526_Boot\\TourismLease\\src\\main\\resources\\templates";
+        Configuration configuration = new Configuration();
+        configuration.setDirectoryForTemplateLoading(new File(ftl));
+
+        //使用封装的工具类 并打印执行结果
+        String test = FkExcelUtils.exportExcel(response, configuration, "empinfo.ftl", hashMap, item + "_" + user.getName() + ".xls");
+        System.out.println("test : " + test);
+
+
+        return DooUtils.print(0, "打印成功", null, null);
+    }
+
 
     /**
      * 计算游玩几小时
