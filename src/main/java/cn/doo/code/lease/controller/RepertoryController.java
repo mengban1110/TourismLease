@@ -5,10 +5,7 @@ import cn.doo.code.lease.entity.pojo.RepertoryPojo;
 import cn.doo.code.lease.service.RepertoryService;
 import cn.doo.code.utils.DooUtils;
 import com.alibaba.druid.util.StringUtils;
-import org.apache.ibatis.annotations.Results;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 
+/**
+ * 仓库库存接口
+ */
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/repertory")

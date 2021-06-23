@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 
+/**
+ * 后台管理系统信息展示接口
+ */
 @RequestMapping("/api/homepage")
 @CrossOrigin("*")
 @RestController

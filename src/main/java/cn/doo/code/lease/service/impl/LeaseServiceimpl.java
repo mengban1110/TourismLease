@@ -97,6 +97,7 @@ public class LeaseServiceimpl implements LeaseService {
      * @desc 新增一个订单信息
      */
     @Override
+//    @Transactional
     public Map<String, Object> insertOne(TokenVerify tokenVerify, List<LeaseinfoPojo> leaseinfo, Integer uid) throws Exception {
 
         /**

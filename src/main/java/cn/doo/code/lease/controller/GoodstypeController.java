@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * 库存商品种类
+ */
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/goodstype")

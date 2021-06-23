@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * @author 梦伴
- * @desc
+ * @desc 我的个人信息接口
  * @time 2021-06-02-10:15
  */
 @CrossOrigin("*")
@@ -30,8 +30,8 @@ public class MyinfoController {
     /**
      * 获取登录用户信息
      *
-     * @param tokenVerify
-     * @return
+     * @param tokenVerify token对象
+     * @return json信息串
      */
     @RequestMapping(value = "/getinfo", method = RequestMethod.GET)
     public Map<String, Object> getinfo(TokenVerify tokenVerify) {
@@ -43,8 +43,8 @@ public class MyinfoController {
 
     /**
      * 修改登录用户信息
-     *
      * @param tokenVerify
+     * @param employeePojo
      * @return
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)

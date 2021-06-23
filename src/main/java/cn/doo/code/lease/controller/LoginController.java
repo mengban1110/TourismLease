@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * 登录接口
+ */
 @RequestMapping("/api/login")
 @CrossOrigin("*")
 @RestController

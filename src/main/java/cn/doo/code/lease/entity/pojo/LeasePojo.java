@@ -8,6 +8,9 @@ import lombok.Data;
 import java.util.Date;
 
 
+/**
+ * leaseResultsMaps
+ */
 @Data
 @TableName("lease")
 public class LeasePojo {

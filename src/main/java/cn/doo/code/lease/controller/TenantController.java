@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * @author 梦伴
- * @desc
+ * @desc 租户接口
  * @time 2021-06-01-23:09
  */
 @CrossOrigin("*")

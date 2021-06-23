@@ -44,7 +44,7 @@ public class GoodstypeServiceimpl implements GoodstypeService {
         IPage<GoodstypePojo> pagez = new Page<>(page, limit);
         IPage<GoodstypePojo> goodstypePojoIPage = goodstypeMapper.selectPage(pagez, null);
 
-        return DooUtils.print(0, "请求成功", goodstypePojoIPage.getRecords(), 123);
+        return DooUtils.print(0, "请求成功", goodstypePojoIPage.getRecords(), goodstypePojoIPage.getTotal());
     }
 
     /**

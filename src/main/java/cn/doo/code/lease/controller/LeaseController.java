@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 租赁订单接口
+ */
 @RequestMapping("/api/lease")
 @CrossOrigin("*")
 @RestController
@@ -28,6 +31,7 @@ public class LeaseController {
 
 
     /**
+     * 获取所有租赁商品信息
      * @param tokenVerify
      * @param page
      * @param limit
@@ -35,7 +39,6 @@ public class LeaseController {
      * @return
      * @throws SolrServerException
      * @throws IOException
-     * @desc 获取所有租赁商品信息
      */
     @RequestMapping("/queryAll")
     public Map<String, Object> queryAll(TokenVerify tokenVerify, Integer page, Integer limit, String phone) throws SolrServerException, IOException {
